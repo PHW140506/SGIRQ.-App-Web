@@ -1,0 +1,79 @@
+<div class="h-screen flex flex-col bg-[#f8f9fa] text-slate-800 select-none overflow-hidden font-sans">
+
+  <!-- Barra de Ventana Superior (Verde Oscuro Institucional) -->
+  <header class="bg-[#114b2f] text-white h-9 px-3 flex items-center justify-between text-xs shrink-0 shadow-sm">
+    <div class="flex items-center gap-2">
+      <span class="tracking-wide font-medium">Sistema de Almacén de Reactivos Químicos</span>
+    </div>
+    <div class="flex items-center gap-4 text-white/80">
+      <span class="cursor-pointer hover:text-white">−</span>
+      <span class="cursor-pointer hover:text-white">□</span>
+      <span (click)="onLogout()" class="cursor-pointer hover:text-rose-300 font-bold" title="Cerrar sesión">✕</span>
+    </div>
+  </header>
+
+  <!-- Espacio de Trabajo: Sidebar Izquierdo + Contenido -->
+  <div class="flex-1 flex overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="w-56 bg-[#f1f3f5] border-r border-slate-300 flex flex-col justify-between shrink-0 py-4 px-3">
+      <div>
+        <!-- Logo Matraz Isométrico -->
+        <div class="flex items-center justify-center py-2 mb-4">
+          <svg viewBox="0 0 100 100" class="w-20 h-20">
+            <path d="M38 12 H62 M43 12 V32 L20 62 L50 80 L80 62 L57 32 V12" fill="none" stroke="#0f5132" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M20 62 L50 47 L80 62 L50 80 Z" fill="#198754"/>
+            <path d="M20 62 V78 L50 94 V80 Z" fill="#0f5132"/>
+            <path d="M80 62 V78 L50 94 V80 Z" fill="#157347"/>
+          </svg>
+        </div>
+
+        <!-- Menú de Navegación -->
+        <nav class="space-y-1 text-xs font-medium text-slate-700">
+          <a routerLink="/dashboard" routerLinkActive="bg-[#dbece2] text-[#0f5132] font-bold border-l-4 border-[#0f5132]" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition hover:bg-slate-200">
+            <span>Dashboard</span>
+          </a>
+          <a routerLink="/inventario" routerLinkActive="bg-[#dbece2] text-[#0f5132] font-bold border-l-4 border-[#0f5132]" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition hover:bg-slate-200">
+            <span>Inventario</span>
+          </a>
+          <a routerLink="/entradas" routerLinkActive="bg-[#dbece2] text-[#0f5132] font-bold border-l-4 border-[#0f5132]" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition hover:bg-slate-200">
+            <span>Entradas</span>
+          </a>
+          <a routerLink="/salidas" routerLinkActive="bg-[#dbece2] text-[#0f5132] font-bold border-l-4 border-[#0f5132]" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition hover:bg-slate-200">
+            <span>Salidas</span>
+          </a>
+          <a routerLink="/solicitudes" routerLinkActive="bg-[#dbece2] text-[#0f5132] font-bold border-l-4 border-[#0f5132]" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition hover:bg-slate-200">
+            <span>Solicitudes</span>
+          </a>
+          <a routerLink="/reportes" routerLinkActive="bg-[#dbece2] text-[#0f5132] font-bold border-l-4 border-[#0f5132]" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition hover:bg-slate-200">
+            <span>Reportes</span>
+          </a>
+          <a routerLink="/usuarios" routerLinkActive="bg-[#dbece2] text-[#0f5132] font-bold border-l-4 border-[#0f5132]" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition hover:bg-slate-200">
+            <span>Usuarios</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- HU-002: Botón Cerrar Sesión Oficial -->
+      <div class="pt-3 border-t border-slate-300">
+        <button (click)="onLogout()" class="w-full flex items-center gap-3 px-3.5 py-2 rounded-lg text-xs font-medium text-slate-700 hover:bg-rose-50 hover:text-rose-700 transition">
+          <span>Cerrar sesión</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Contenido Dinámico de las Vistas -->
+    <main class="flex-1 bg-[#f8f9fa] overflow-y-auto p-6">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+
+  <!-- Footer Oficial: Versión 1.0.0 | Usuario | Rol -->
+  <footer class="bg-[#e9ecef] border-t border-slate-300 h-8 px-5 flex items-center justify-between text-xs text-slate-600 shrink-0">
+    <span>Versión 1.0.0</span>
+    <div>
+      <span>Usuario: <strong class="text-slate-800">{{ user()?.usuario || 'Invitado' }}</strong></span>
+      <span class="mx-2 text-slate-400">|</span>
+      <span>Rol: <strong class="text-slate-800">{{ user()?.rol || 'Sin rol' }}</strong></span>
+    </div>
+  </footer>
+</div>
