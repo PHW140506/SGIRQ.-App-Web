@@ -42,4 +42,7 @@ export class AuthService {
     const raw = localStorage.getItem('sgirq_user');
     return raw ? JSON.parse(raw) : null;
   }
+  recuperarAcceso(correo: string): Observable<{ mensaje: string }> {
+    return this.http.post<{ mensaje: string }>(`${this.apiUrl}/recuperar-acceso`, { correo });
+  }
 }

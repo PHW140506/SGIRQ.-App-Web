@@ -36,4 +36,18 @@ public class AuthController : ControllerBase
             return Unauthorized(new { mensaje = ex.Message, codigo = ex.CodigoHistoriaUsuario });
         }
     }
+
+    // HU-004: Recuperar acceso a cuenta (Escenarios 1 y 3)
+    [HttpPost("recuperar-acceso")]
+    public async Task<IActionResult> RecuperarAcceso([FromBody] SolicitarRecuperacionCommand command)
+    {
+        if (string.IsNullOrWhiteSpace(command.Correo))
+        {
+            return BadRequest(new { mensaje = "El correo electrónico es obligatorio." });
+        }
+
+        // MediatR ejecuta SolicitarRecuperacionCommandHandler y retorna la respuesta neutral
+        var respuesta = await _mediator.Send(command);
+        return Ok(new { mensaje = respuesta });
+    }
 }
