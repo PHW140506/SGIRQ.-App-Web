@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="SGIRQ.Api/SGIRQ.Api.csproj" />
+  <Project Path="SGIRQ.Application/SGIRQ.Application.csproj" />
+  <Project Path="SGIRQ.Domain/SGIRQ.Domain.csproj" />
+  <Project Path="SGIRQ.Infrastructure/SGIRQ.Infrastructure.csproj" />
+</Solution>
