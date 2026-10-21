@@ -15,7 +15,12 @@ export class LayoutComponent {
 
   readonly user = this.authService.currentUser;
 
-  // HU-002 Escenario 1: Pulso cerrar sesión y vuelvo al acceso
+  // Comprueba si el rol en sesión está dentro de los roles autorizados
+  hasRole(allowedRoles: string[]): boolean {
+    const rolActual = this.user()?.rol;
+    return !!rolActual && allowedRoles.includes(rolActual);
+  }
+
   onLogout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);

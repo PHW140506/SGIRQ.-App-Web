@@ -10,18 +10,29 @@ public static class DbInitializer
     {
         await context.Database.EnsureCreatedAsync();
 
-        if (!await context.Usuarios.AnyAsync())
+        // Si la tabla no tiene los usuarios de prueba, los agregamos
+        if (!await context.Usuarios.AnyAsync(u => u.Username == "mgarcia"))
         {
-            // Usuario Administrador inicial de prueba (conforme al PDF: jrodriguez)
-            var admin = new Usuario(
-                nombreCompleto: "Jorge Rodríguez",
-                username: "jrodriguez",
-                correo: "jrodriguez@labquim.com",
-                passwordHash: hasher.HashPassword("Admin123*"),
-                rol: "Administrador"
-            );
+            var hashComun = hasher.HashPassword("Admin123*");
 
-            await context.Usuarios.AddAsync(admin);
+            var usuariosPrueba = new List<Usuario>
+            {
+                // Escenario 1: Administrador con acceso total
+                new("Jorge Rodríguez", "jrodriguez", "jrodriguez@labquim.com", hashComun, "Administrador"),
+                // Escenario 2: Auxiliar bloqueado en Usuarios
+                new("María García", "mgarcia", "mgarcia@labquim.com", hashComun, "Auxiliar"),
+                // Escenario 3: Solicitante bloqueado en inventario
+                new("Ana Vargas", "avargas", "avargas@labquim.com", hashComun, "Solicitante")
+            };
+
+            foreach (var u in usuariosPrueba)
+            {
+                if (!await context.Usuarios.AnyAsync(x => x.Username == u.Username))
+                {
+                    await context.Usuarios.AddAsync(u);
+                }
+            }
+
             await context.SaveChangesAsync();
         }
     }
