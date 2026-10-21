@@ -27,33 +27,65 @@
           </svg>
         </div>
 
-        <!-- Menú de Navegación -->
+        <!-- Menú de Navegación con restricciones por rol (HU-003) -->
         <nav class="space-y-1 text-xs font-medium text-slate-700">
-          <a routerLink="/dashboard" routerLinkActive="bg-[#dbece2] text-[#0f5132] font-bold border-l-4 border-[#0f5132]" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition hover:bg-slate-200">
+          <a *ngIf="hasRole(['Administrador', 'Encargado', 'Auxiliar', 'Almacén', 'Técnico', 'Consulta'])"
+             routerLink="/dashboard"
+             routerLinkActive="bg-[#dbece2] text-[#0f5132] font-bold border-l-4 border-[#0f5132]"
+             class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition hover:bg-slate-200">
             <span>Dashboard</span>
           </a>
-          <a routerLink="/inventario" routerLinkActive="bg-[#dbece2] text-[#0f5132] font-bold border-l-4 border-[#0f5132]" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition hover:bg-slate-200">
+
+          <!-- HU-003 Escenario 3: Oculto para Solicitante -->
+          <a *ngIf="hasRole(['Administrador', 'Encargado', 'Auxiliar', 'Almacén', 'Técnico', 'Consulta'])"
+             routerLink="/inventario"
+             routerLinkActive="bg-[#dbece2] text-[#0f5132] font-bold border-l-4 border-[#0f5132]"
+             class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition hover:bg-slate-200">
             <span>Inventario</span>
           </a>
-          <a routerLink="/entradas" routerLinkActive="bg-[#dbece2] text-[#0f5132] font-bold border-l-4 border-[#0f5132]" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition hover:bg-slate-200">
+
+          <!-- HU-003 Escenario 3: Oculto para Solicitante -->
+          <a *ngIf="hasRole(['Administrador', 'Encargado', 'Auxiliar', 'Almacén'])"
+             routerLink="/entradas"
+             routerLinkActive="bg-[#dbece2] text-[#0f5132] font-bold border-l-4 border-[#0f5132]"
+             class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition hover:bg-slate-200">
             <span>Entradas</span>
           </a>
-          <a routerLink="/salidas" routerLinkActive="bg-[#dbece2] text-[#0f5132] font-bold border-l-4 border-[#0f5132]" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition hover:bg-slate-200">
+
+          <!-- HU-003 Escenario 3: Oculto para Solicitante -->
+          <a *ngIf="hasRole(['Administrador', 'Encargado', 'Auxiliar', 'Almacén', 'Técnico'])"
+             routerLink="/salidas"
+             routerLinkActive="bg-[#dbece2] text-[#0f5132] font-bold border-l-4 border-[#0f5132]"
+             class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition hover:bg-slate-200">
             <span>Salidas</span>
           </a>
-          <a routerLink="/solicitudes" routerLinkActive="bg-[#dbece2] text-[#0f5132] font-bold border-l-4 border-[#0f5132]" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition hover:bg-slate-200">
+
+          <!-- Módulo visible para Solicitante -->
+          <a *ngIf="hasRole(['Administrador', 'Encargado', 'Auxiliar', 'Almacén', 'Técnico', 'Solicitante'])"
+             routerLink="/solicitudes"
+             routerLinkActive="bg-[#dbece2] text-[#0f5132] font-bold border-l-4 border-[#0f5132]"
+             class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition hover:bg-slate-200">
             <span>Solicitudes</span>
           </a>
-          <a routerLink="/reportes" routerLinkActive="bg-[#dbece2] text-[#0f5132] font-bold border-l-4 border-[#0f5132]" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition hover:bg-slate-200">
+
+          <a *ngIf="hasRole(['Administrador', 'Encargado', 'Consulta'])"
+             routerLink="/reportes"
+             routerLinkActive="bg-[#dbece2] text-[#0f5132] font-bold border-l-4 border-[#0f5132]"
+             class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition hover:bg-slate-200">
             <span>Reportes</span>
           </a>
-          <a routerLink="/usuarios" routerLinkActive="bg-[#dbece2] text-[#0f5132] font-bold border-l-4 border-[#0f5132]" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition hover:bg-slate-200">
+
+          <!-- HU-003 Escenario 1 y 2: Visible ÚNICAMENTE para Administrador (Oculto para Auxiliar) -->
+          <a *ngIf="hasRole(['Administrador'])"
+             routerLink="/usuarios"
+             routerLinkActive="bg-[#dbece2] text-[#0f5132] font-bold border-l-4 border-[#0f5132]"
+             class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition hover:bg-slate-200">
             <span>Usuarios</span>
           </a>
         </nav>
       </div>
 
-      <!-- HU-002: Botón Cerrar Sesión Oficial -->
+      <!-- HU-002: Botón Cerrar Sesión -->
       <div class="pt-3 border-t border-slate-300">
         <button (click)="onLogout()" class="w-full flex items-center gap-3 px-3.5 py-2 rounded-lg text-xs font-medium text-slate-700 hover:bg-rose-50 hover:text-rose-700 transition">
           <span>Cerrar sesión</span>
