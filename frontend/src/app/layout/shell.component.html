@@ -1,0 +1,23 @@
+<div class="shell">
+  <aside class="sidebar">
+    <div class="logo"><img src="/logo-sgirq.jpeg" alt="Logo SGIRQ"><strong>SGIRQ</strong></div>
+    @if (auth.session()?.rol !== 'Solicitante') {
+      <nav aria-label="Navegación principal">
+        <a routerLink="/dashboard" routerLinkActive="active">▦ &nbsp; Dashboard</a>
+        <a routerLink="/inventario" routerLinkActive="active">◇ &nbsp; Inventario</a>
+        @if (auth.isAdmin()) { <a routerLink="/entradas" routerLinkActive="active">↧ &nbsp; Entradas</a> }
+        <a routerLink="/salidas" routerLinkActive="active">↥ &nbsp; Salidas</a>
+        @if (auth.isAdmin()) { <a routerLink="/personal" routerLinkActive="active">♙ &nbsp; Personal</a> }
+      </nav>
+    }
+    <div class="sidebar-footer">
+      <a routerLink="/cuenta" routerLinkActive="active">⚙ &nbsp; Mi cuenta</a>
+      <button type="button" class="nav-button" (click)="auth.logout()">⇥ &nbsp; Cerrar sesión</button>
+    </div>
+  </aside>
+  <div class="content">
+    <header class="topbar"><span>Sistema de Almacén de Reactivos Químicos</span>
+      <span>{{ auth.session()?.nombre }} · {{ auth.session()?.rol }}</span></header>
+    <main class="page"><router-outlet /></main>
+  </div>
+</div>

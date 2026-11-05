@@ -1,0 +1,16 @@
+
+@if(vm.error()){<p class="error" role="alert">{{vm.error()}}</p>}
+@if(vm.mensaje()){<p class="success" role="status">{{vm.mensaje()}}</p>}
+<section class="panel narrow"><h2>Registrar entrada</h2><form (ngSubmit)="guardar()">
+  <label>Reactivo<select name="reactivo" [(ngModel)]="idReactivo" required>
+    <option [ngValue]="0">Seleccionar reactivo</option>
+    @for(r of vm.reactivos();track r.idReactivo){<option [ngValue]="r.idReactivo">{{r.nombreComercial}} — {{r.cantidadReactivo}} {{r.unidadMedida}}</option>}
+  </select></label>
+  <label>Cantidad recibida<input type="number" name="cantidad" [(ngModel)]="cantidad" min="0.01" step="0.01" required></label>
+
+  <div class="actions right"><button class="primary" [disabled]="idReactivo <= 0 || cantidad <= 0">Guardar entrada</button></div>
+</form></section><section class="panel"><h2>Existencias actualizadas</h2>
+  <div class="table-wrap"><table><thead><tr><th>Reactivo</th><th>Existencia</th><th>Unidad</th></tr></thead><tbody>
+    @for(r of vm.reactivos();track r.idReactivo){<tr><td>{{r.nombreComercial}}</td><td>{{r.cantidadReactivo}}</td><td>{{r.unidadMedida}}</td></tr>}
+    @empty {<tr><td colspan="3">Sin reactivos.</td></tr>}</tbody></table></div>
+</section>

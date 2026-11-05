@@ -1,0 +1,12 @@
+<div class="login-page"><div class="login-card">
+  <img src="/logo-sgirq.jpeg" alt="Logotipo del SGIRQ" class="login-logo">
+  <h1>Iniciar sesión</h1><p class="subtle">Accede a tu cuenta para continuar</p>
+  <form (ngSubmit)="vm.ingresar(usuario, contrasenia)">
+    <label>Usuario <input name="usuario" [(ngModel)]="usuario" autocomplete="username" required placeholder="Ingresa tu usuario"></label>
+    <label>Contraseña <div class="password-input"><input name="contrasenia" [(ngModel)]="contrasenia"
+      [type]="mostrar ? 'text' : 'password'" autocomplete="current-password" required placeholder="Ingresa tu contraseña">
+      <button type="button" class="eye" (click)="mostrar = !mostrar" aria-label="Mostrar u ocultar contraseña">◉</button></div></label>
+    @if (vm.error()) { <p class="error" role="alert">{{ vm.error() }}</p> }
+    <button class="primary full" type="submit" [disabled]="vm.loading()">{{ vm.loading() ? 'Ingresando...' : 'Iniciar sesión' }}</button>
+  </form>
+</div></div>
