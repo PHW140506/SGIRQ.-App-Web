@@ -1,0 +1,97 @@
+<h1>Inventario</h1>
+<p class="subtle">Catálogo y existencias de reactivos químicos</p>
+@if(vm.error()){<p class="error" role="alert">{{vm.error()}}</p>}
+@if(vm.mensaje()){<p class="success" role="status">{{vm.mensaje()}}</p>}
+<section class="panel">
+<div class="toolbar wrap">
+  <input type="search" placeholder="Buscar por nombre o CAS" [(ngModel)]="buscar" (ngModelChange)="cargar()">
+  <select [(ngModel)]="estadoFisico" (ngModelChange)="cargar()">
+<option value="">Todos los estados</option>
+    @for(e of estados;track e){<option [value]="e">{{e}}</option>}</select>
+  <select [(ngModel)]="colorAnaquel" (ngModelChange)="cargar()">
+<option value="">Todos los anaqueles</option>
+    @for(a of anaqueles;track a){<option [value]="a">{{a}}</option>}</select>
+  <button class="outline" (click)="limpiarFiltros()">Limpiar</button>
+  @if(auth.isAdmin()){<button class="primary" (click)="nuevo()">+ Agregar reactivo</button>}
+</div>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Nombre comercial</th>
+<th>Nombre químico</th>
+<th>CAS</th>
+  <th>Estado</th>
+<th>Cantidad</th>
+<th>Unidad</th>
+<th>Stock mínimo</th>
+<th>Anaquel</th>
+<th>Acciones</th>
+</tr>
+</thead>
+<tbody>
+  @for(r of vm.lista();track r.idReactivo){<tr>
+    <td>{{r.nombreComercial}}</td>
+<td>{{r.nombreQuimico}}</td>
+<td>{{r.numeroCAS}}</td>
+    <td>{{r.estadoFisico}}</td>
+<td>
+<span [class.warn]="r.cantidadReactivo <= r.stockMinimo">{{r.cantidadReactivo}}</span>
+</td>
+    <td>{{r.unidadMedida}}</td>
+<td>{{r.stockMinimo}}</td>
+<td>{{r.colorAnaquel}}</td>
+    <td>
+<div class="actions">
+<button class="outline small" (click)="detalle=r">Ver</button>
+      @if(auth.isAdmin()){<button class="outline small" (click)="editar(r)">Editar</button>}</div>
+</td>
+  </tr>} @empty {<tr>
+<td colspan="9">No se encontraron reactivos.</td>
+</tr>}
+</tbody>
+</table>
+</div>
+</section>
+@if(detalle){<div class="overlay" role="presentation">
+<section class="modal" role="dialog" aria-modal="true" aria-label="Ficha de reactivo">
+  <h2>Ficha de reactivo</h2>
+<p>
+<strong>{{detalle.nombreComercial}}</strong> — {{detalle.nombreQuimico}}</p>
+  <p>CAS: {{detalle.numeroCAS}} · Estado: {{detalle.estadoFisico}}</p>
+  <p>Existencia: {{detalle.cantidadReactivo}} {{detalle.unidadMedida}} · Mínimo: {{detalle.stockMinimo}}</p>
+  <p>Anaquel: {{detalle.colorAnaquel}} · Responsable: #{{detalle.idPersonal}}</p>
+  <button class="primary" (click)="detalle=null">Cerrar</button>
+</section>
+</div>}
+@if(mostrarFormulario){<div class="overlay">
+<section class="modal large" role="dialog" aria-modal="true" aria-label="Formulario de reactivo">
+  <h2>{{editarId?'Editar reactivo':'Agregar reactivo'}}</h2>
+  <form (ngSubmit)="guardar()">
+<div class="form-grid">
+    <label>Nombre comercial<input required maxlength="50" [(ngModel)]="formulario.nombreComercial" name="nombreComercial">
+</label>
+    <label>Nombre químico<input required maxlength="50" [(ngModel)]="formulario.nombreQuimico" name="nombreQuimico">
+</label>
+    <label>Número CAS<input required maxlength="30" [(ngModel)]="formulario.numeroCAS" name="numeroCAS">
+</label>
+    <label>Estado físico<select [(ngModel)]="formulario.estadoFisico" name="estadoFisico">@for(e of estados;track e){<option [value]="e">{{e}}</option>}</select>
+</label>
+    @if(!editarId){<label>Cantidad inicial<input required type="number" min="0" step="0.01" [(ngModel)]="formulario.cantidadReactivo" name="cantidad">
+</label>}
+    <label>Unidad de medida<select [(ngModel)]="formulario.unidadMedida" name="unidadMedida">@for(u of unidades;track u){<option [value]="u">{{u}}</option>}</select>
+</label>
+    <label>Stock mínimo<input required type="number" min="0" step="0.01" [(ngModel)]="formulario.stockMinimo" name="minimo">
+</label>
+    <label>Color de anaquel<select [(ngModel)]="formulario.colorAnaquel" name="colorAnaquel">@for(a of anaqueles;track a){<option [value]="a">{{a}}</option>}</select>
+</label>
+    <label>ID del personal responsable<input required type="number" min="1" [(ngModel)]="formulario.idPersonal" name="idPersonal">
+</label>
+  </div>
+<div class="actions right">
+<button class="outline" type="button" (click)="mostrarFormulario=false">Cancelar</button>
+    <button class="primary">Guardar</button>
+</div>
+</form>
+</section>
+</div>}

@@ -1,0 +1,25 @@
+<h1>Personal</h1><p class="subtle">Administración de cuentas (HU-005 a HU-007)</p>
+@if (vm.error()) { <p class="error" role="alert">{{ vm.error() }}</p> }
+@if (vm.mensaje()) { <p class="success" role="status">{{ vm.mensaje() }}</p> }
+<div class="workspace"><section class="panel flex-grow">
+  <div class="toolbar"><input type="search" [(ngModel)]="buscar" (ngModelChange)="vm.cargar(buscar)" placeholder="Buscar personal">
+    <button class="outline" (click)="limpiar()">+ Agregar personal</button></div>
+  <div class="table-wrap"><table><thead><tr><th>Nombre</th><th>Usuario</th><th>Rol</th><th>Acciones</th></tr></thead>
+  <tbody>@for(p of vm.lista(); track p.idPersonal) {
+    <tr><td>{{ p.nombrePersonal }} {{ p.apellidosPersonal }}</td><td>{{ p.usuarioPersonalLogin }}</td>
+      <td>{{ p.tipoPersonal }}</td><td><button class="outline small" (click)="editar(p)">Editar</button></td></tr>
+  } @empty { <tr><td colspan="4">No hay personal registrado.</td></tr> }</tbody></table></div>
+</section><section class="panel form-panel"><h2>{{ editId ? 'Editar personal' : 'Agregar personal' }}</h2>
+  <form (ngSubmit)="guardar()">
+    <label>Nombre<input [(ngModel)]="formulario.nombrePersonal" name="nombre" required maxlength="30"></label>
+    <label>Apellidos<input [(ngModel)]="formulario.apellidosPersonal" name="apellidos" required maxlength="45"></label>
+    @if (!editId) {
+      <label>Usuario<input [(ngModel)]="formulario.usuarioPersonalLogin" name="usuario" required maxlength="25"></label>
+      <label>Contraseña<input [(ngModel)]="formulario.contrasenia" name="contrasenia" type="password" minlength="10" required></label>
+    }
+    <label>Tipo de personal<select [(ngModel)]="formulario.tipoPersonal" name="rol">
+      @for(rol of roles; track rol) {<option [value]="rol">{{ rol }}</option>}
+    </select></label>
+    <div class="actions"><button class="primary">Guardar</button><button type="button" class="outline" (click)="limpiar()">Cancelar</button></div>
+  </form>
+</section></div>
