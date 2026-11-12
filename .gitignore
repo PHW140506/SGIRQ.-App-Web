@@ -37,3 +37,23 @@ yarn-error.log*
 Thumbs.db
 *.swp
 *.bak
+# Angular
+**/node_modules/
+**/.angular/
+**/dist/
+
+# .NET
+**/bin/
+**/obj/
+
+# Archivos privados
+.env
+.env.*
+!.env.example
+**/appsettings.Development.json
+**/secrets.json
+
+# Base de datos local
+*.db
+*.db-shm
+*.db-wal

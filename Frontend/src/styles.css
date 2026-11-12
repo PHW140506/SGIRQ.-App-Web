@@ -1,1 +1,322 @@
-/* You can add global styles to this file, and also import other style files */
+*{
+  box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,Arial,sans-serif;
+  color:#21443d;
+  background:#f7faf8;
+  font-size:15px}
+
+button,input,select,textarea{
+  font:inherit}
+button{
+  cursor:pointer}
+a{
+  text-decoration:none;
+  color:inherit}
+h1{
+  font-size:28px;
+  color:#08583f;
+  margin:0 0 8px}
+h2{
+  font-size:18px;
+  margin:0 0 16px;
+  color:#07543e}
+
+.subtle{
+  color:#6c807a;
+  font-size:13px}
+.shell{
+  display:flex;
+  min-height:100vh}
+.sidebar{
+  width:215px;
+  background:#fff;
+  border-right:1px solid #e3ece7;
+  display:flex;
+  flex-direction:column;
+  padding:20px 12px;
+  flex-shrink:0}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:20px;
+  color:#07543e;
+  padding:6px 12px 25px}
+.logo img{
+  width:52px;
+  height:52px;
+  object-fit:contain}
+
+nav{
+  display:grid;
+  gap:6px}
+nav a,.sidebar-footer a,.nav-button{
+  display:block;
+  width:100%;
+  padding:14px 13px;
+  border-radius:7px;
+  border:0;
+  background:transparent;
+  text-align:left;
+  color:#4a625a}
+
+nav a.active,.sidebar-footer a.active{
+  background:#e6f6ef;
+  color:#008b62;
+  border-left:3px solid #00a86b;
+  font-weight:700}
+nav a:hover,.nav-button:hover{
+  background:#eef8f3}
+
+.sidebar-footer{
+  margin-top:auto;
+  border-top:1px solid #e3ece7;
+  padding-top:14px}
+.content{
+  flex:1;
+  min-width:0}
+.topbar{
+  background:#075441;
+  color:white;
+  min-height:48px;
+  padding:15px 24px;
+  display:flex;
+  justify-content:space-between;
+  gap:18px;
+  font-size:13px}
+.page{
+  padding:28px;
+  max-width:1500px;
+  margin:auto}
+
+.panel{
+  background:white;
+  border:1px solid #e2ebe6;
+  box-shadow:0 3px 12px #184b3710;
+  border-radius:12px;
+  padding:22px;
+  margin:18px 0}
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:18px}
+.stats .panel{
+  margin:16px 0}
+.stat{
+  display:flex;
+  flex-direction:column;
+  gap:9px}
+.stat strong{
+  font-size:32px;
+  color:#067953}
+.stat small{
+  color:#879b92}
+
+.toolbar{
+  display:flex;
+  align-items:end;
+  gap:12px;
+  margin-bottom:15px}
+.wrap{
+  flex-wrap:wrap}
+.toolbar input{
+  max-width:270px}
+.workspace{
+  display:flex;
+  align-items:start;
+  gap:18px}
+.workspace .panel{
+  margin:18px 0}
+.flex-grow{
+  flex:1;
+  min-width:0}
+.form-panel{
+  width:330px}
+.narrow{
+  max-width:630px}
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px}
+.span-2{
+  grid-column:span 2}
+
+label{
+  display:block;
+  font-size:13px;
+  font-weight:650;
+  color:#26594a;
+  margin-bottom:14px}
+label>input,label>select,label>textarea,.toolbar>input,.toolbar>select{
+  display:block;
+  width:100%;
+  min-height:41px;
+  margin-top:7px;
+  padding:10px 11px;
+  border-radius:6px;
+  border:1px solid #d7e3de;
+  background:#fff;
+  color:#244b3f}
+
+input:focus,select:focus,textarea:focus{
+  outline:2px solid #66cba8}
+textarea{
+  resize:vertical}
+.primary{
+  background:linear-gradient(100deg,#00a678,#00875e);
+  color:white;
+  border:0;
+  padding:11px 20px;
+  border-radius:6px;
+  font-weight:650}
+.primary:hover{
+  filter:brightness(.95)}
+.primary:disabled{
+  opacity:.55;
+  cursor:not-allowed}
+.outline{
+  border:1px solid #b7d9c9;
+  background:white;
+  color:#08704f;
+  border-radius:6px;
+  padding:10px 13px}
+.small{
+  font-size:12px;
+  padding:6px 9px}
+.full{
+  width:100%}
+.actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap}
+.right{
+  justify-content:end;
+  margin-top:15px}
+
+.table-wrap{
+  overflow-x:auto}
+table{
+  border-collapse:collapse;
+  width:100%;
+  font-size:13px}
+th,td{
+  padding:12px 9px;
+  border-bottom:1px solid #edf1ee;
+  text-align:left;
+  vertical-align:middle}
+th{
+  color:#245c4c;
+  font-size:12px;
+  white-space:nowrap}
+td{
+  color:#465b53}
+.warn,.error{
+  color:#a83a2b}
+.error{
+  background:#fff1f0;
+  padding:12px;
+  border-radius:7px}
+.success{
+  color:#08704f;
+  background:#e8f7ee;
+  padding:12px;
+  border-radius:7px}
+.alert-item{
+  padding:10px;
+  border-bottom:1px solid #eee2d1}
+
+.login-page{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  background:radial-gradient(circle at 1% 95%,#e1f3ec,transparent 32%),radial-gradient(circle at 95% 90%,#e9f8f0,transparent 28%),#f7faf8;
+  padding:20px}
+.login-card{
+  width:min(100%,410px);
+  background:white;
+  border-radius:14px;
+  border:1px solid #e7eee8;
+  padding:32px;
+  box-shadow:0 12px 34px #1945341c}
+.login-logo{
+  height:124px;
+  display:block;
+  margin:0 auto 8px}
+.login-card h1{
+  text-align:center}
+.login-card>.subtle{
+  text-align:center;
+  margin-bottom:30px}
+.password-input{
+  display:flex;
+  border:1px solid #d7e3de;
+  border-radius:6px;
+  margin-top:7px}
+.password-input input{
+  border:0;
+  flex:1;
+  min-width:0;
+  padding:10px}
+.eye{
+  background:white;
+  border:0;
+  color:#55756b;
+  padding:8px}
+.login-card form label{
+  margin-bottom:20px}
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:#072f25a6;
+  display:grid;
+  place-items:center;
+  padding:20px;
+  z-index:10}
+.modal{
+  background:white;
+  border-radius:12px;
+  padding:26px;
+  width:min(100%,440px);
+  max-height:90vh;
+  overflow:auto}
+.modal.large{
+  width:min(100%,740px)}
+
+@media(max-width:900px){
+  .workspace{
+  flex-direction:column}
+.workspace .panel{
+  width:100%}
+.stats{
+  grid-template-columns:1fr}
+.sidebar{
+  width:165px}
+.topbar{
+  flex-direction:column}
+.form-grid{
+  grid-template-columns:1fr}
+.span-2{
+  grid-column:span 1}
+}
+
+@media(max-width:580px){
+  .shell{
+  display:block}
+.sidebar{
+  width:100%;
+  padding:8px}
+.sidebar nav{
+  display:flex;
+  overflow-x:auto}
+.sidebar nav a{
+  white-space:nowrap}
+.sidebar-footer{
+  display:flex}
+.page{
+  padding:15px}
+}
+
