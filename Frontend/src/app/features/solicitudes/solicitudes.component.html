@@ -1,0 +1,24 @@
+<h1>Solicitudes y responsables</h1>
+<p class="subtle">Épica 6 · Salidas vinculadas a un solicitante y personal responsable.</p>
+@if (vm.error()) { <p class="error">{{vm.error()}}</p> }
+<section class="panel">
+  <h2>Consultar salidas de un solicitante</h2>
+  <div class="toolbar wrap">
+    <label>Solicitante
+      <select [(ngModel)]="idUsuario" name="idUsuario">
+        <option [ngValue]="0">Seleccionar usuario</option>
+        @for (id of vm.usuarios(); track id) { <option [ngValue]="id">Usuario #{{id}}</option> }
+      </select>
+    </label>
+    <button class="primary" [disabled]="idUsuario <= 0" (click)="vm.consultar(idUsuario)">Consultar</button>
+    <a routerLink="/salidas">Registrar salida de varios reactivos</a>
+  </div>
+  <p class="subtle">El modelo relacional no almacena aprobación ni estado de solicitud; las salidas ya registradas sí se pueden consultar.</p>
+</section>
+<section class="panel"><h2>Resultados</h2><div class="table-wrap"><table>
+  <thead><tr><th>Folio</th><th>Fecha</th><th>Responsable</th><th>Motivo</th><th>Reactivos</th></tr></thead>
+  <tbody>@for (s of vm.salidas(); track s.idSalida) { <tr>
+    <td>{{s.idSalida}}</td><td>{{s.fechaSalida}}</td><td>{{s.responsable}}</td>
+    <td>{{s.motivoSalida}}</td><td>@for (r of s.reactivos; track r.idReactivo) { <p>{{r.reactivo}}: {{r.cantidadSolicitada}}</p> }</td>
+  </tr> } @empty { <tr><td colspan="5">No hay salidas para mostrar.</td></tr> }</tbody>
+</table></div></section>

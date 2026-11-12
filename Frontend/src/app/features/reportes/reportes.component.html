@@ -1,0 +1,33 @@
+<h1>Reportes</h1>
+<p class="subtle">Épica 7 · Exportar inventario, salidas, consumo o existencias bajas.</p>
+@if (vm.error()) { <p class="error">{{vm.error()}}</p> }
+<section class="panel"><h2>Generar PDF</h2>
+  <form (ngSubmit)="generar()" class="form-grid">
+    <label>Tipo de reporte<select [(ngModel)]="tipo" name="tipo" required>
+      <option value="inventario">Inventario general</option>
+      <option value="salidas">Salidas por periodo</option>
+      <option value="consumo">Consumo por periodo</option>
+      <option value="bajo-stock">Existencias bajas</option>
+    </select></label>
+    <label>Desde<input type="date" [(ngModel)]="desde" name="desde"></label>
+    <label>Hasta<input type="date" [(ngModel)]="hasta" name="hasta"></label>
+    <div class="actions right"><button class="primary" type="submit" [disabled]="vm.busy() || ((tipo === 'salidas' || tipo === 'consumo') && (!desde || !hasta))">
+      {{ vm.busy() ? 'Generando...' : 'Descargar PDF' }}</button></div>
+  </form>
+</section>
+@if (vm.alertas(); as datos) {
+  <div class="stats"><div class="panel stat"><span>Total</span><strong>{{datos.total}}</strong></div>
+  <div class="panel stat"><span>Bajo stock</span><strong>{{datos.bajoStock}}</strong></div>
+  <div class="panel stat"><span>Agotados</span><strong>{{datos.agotados}}</strong></div></div>
+  <section class="panel"><h2>Alertas</h2>
+    @for (a of datos.alertas; track a.idReactivo) {
+      <p class="alert-item">{{a.nombre}} — {{a.cantidad}} {{a.unidad}} · {{a.estado}}</p>
+    } @empty { <p>Sin alertas.</p> }
+  </section>
+}
+<section class="panel"><h2>Reportes generados</h2><div class="table-wrap"><table>
+  <thead><tr><th>Folio</th><th>Tipo</th><th>Inicio</th><th>Fin</th><th>Personal</th></tr></thead>
+  <tbody>@for (r of vm.historico(); track r.idReporte) { <tr>
+    <td>{{r.idReporte}}</td><td>{{r.tipoReporte}}</td><td>{{r.fechaInicio}}</td><td>{{r.fechaFinal}}</td><td>#{{r.idPersonal}}</td>
+  </tr> } @empty { <tr><td colspan="5">Todavía no hay reportes.</td></tr> }</tbody>
+</table></div></section>

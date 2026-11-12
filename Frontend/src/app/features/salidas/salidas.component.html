@@ -1,0 +1,62 @@
+<h1>Salidas</h1>
+<p class="subtle">Épicas 5 y 6 · Registrar salidas con uno o varios reactivos.</p>
+@if (vm.error()) { <p class="error" role="alert">{{vm.error()}}</p> }
+@if (vm.mensaje()) { <p class="success" role="status">{{vm.mensaje()}}</p> }
+<section class="panel">
+  <h2>Registrar salida</h2>
+  <form (ngSubmit)="guardar()">
+    <div class="form-grid">
+      <label>Solicitante
+        <select [(ngModel)]="idUsuario" name="idUsuario" required>
+          <option [ngValue]="0">Seleccionar usuario</option>
+          @for (id of vm.usuarios(); track id) { <option [ngValue]="id">Usuario #{{id}}</option> }
+        </select>
+      </label>
+      <label>Fecha y hora<input type="datetime-local" [(ngModel)]="fechaSalida" name="fechaSalida" required></label>
+      <label class="span-2">Motivo de salida
+        <textarea [(ngModel)]="motivoSalida" name="motivoSalida" required maxlength="255" rows="3"></textarea>
+      </label>
+    </div>
+    <h3>Reactivos solicitados</h3>
+    @for (item of items; track $index; let i = $index) {
+      <div class="form-grid">
+        <label>Reactivo
+          <select [(ngModel)]="item.idReactivo" [name]="'reactivo-' + i" required>
+            <option [ngValue]="0">Seleccionar reactivo</option>
+            @for (r of vm.reactivos(); track r.idReactivo) {
+              <option [ngValue]="r.idReactivo">{{r.nombreComercial}} — {{r.cantidadReactivo}} {{r.unidadMedida}}</option>
+            }
+          </select>
+        </label>
+        <label>Cantidad solicitada
+          <input type="number" min="0.01" step="0.01" [(ngModel)]="item.cantidadSolicitada"
+            [name]="'cantidad-' + i" required>
+        </label>
+        <div class="actions right"><button type="button" class="outline" (click)="quitarItem(i)" [disabled]="items.length === 1">Quitar</button></div>
+      </div>
+    }
+    <div class="actions right">
+      <button type="button" class="outline" (click)="agregarItem()">Agregar otro reactivo</button>
+      <button type="submit" class="primary" [disabled]="vm.busy() || idUsuario <= 0 || !motivoSalida.trim() || items[0].idReactivo <= 0 || items[0].cantidadSolicitada <= 0">
+        {{vm.busy() ? 'Guardando...' : 'Registrar salida'}}
+      </button>
+    </div>
+  </form>
+</section>
+@if (auth.isAdmin()) {
+  <section class="panel"><h2>Historial de salidas</h2>
+    <div class="toolbar wrap">
+      <label>Desde<input type="date" [(ngModel)]="desde"></label>
+      <label>Hasta<input type="date" [(ngModel)]="hasta"></label>
+      <button type="button" class="outline" (click)="vm.historial(desde, hasta)">Buscar</button>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>ID</th><th>Fecha</th><th>Solicitante</th><th>Responsable</th><th>Reactivos</th><th>Motivo</th></tr></thead>
+      <tbody>@for (s of vm.salidas(); track s.idSalida) { <tr>
+        <td>{{s.idSalida}}</td><td>{{s.fechaSalida}}</td><td>#{{s.idUsuario}}</td><td>{{s.responsable}}</td>
+        <td>@for (i of s.reactivos; track i.idReactivo) { <p>{{i.reactivo}}: {{i.cantidadSolicitada}}</p> }</td>
+        <td>{{s.motivoSalida}}</td>
+      </tr> } @empty { <tr><td colspan="6">No hay salidas registradas.</td></tr> }</tbody>
+    </table></div>
+  </section>
+}

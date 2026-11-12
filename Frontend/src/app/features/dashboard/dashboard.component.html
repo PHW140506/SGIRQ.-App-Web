@@ -1,0 +1,12 @@
+<h1>Dashboard</h1><p class="subtle">Resumen de las existencias actuales</p>
+@if (vm.error()) { <p class="error">{{ vm.error() }}</p> }
+<div class="stats">
+  <div class="panel stat"><span>Total de reactivos</span><strong>{{ vm.reactivos().length }}</strong><small>Registrados</small></div>
+  <div class="panel stat"><span>Bajo stock</span><strong>{{ vm.bajoStock().length }}</strong><small>Por debajo o igual al mínimo</small></div>
+  <div class="panel stat"><span>Agotados</span><strong>{{ vm.agotados().length }}</strong><small>Sin existencias</small></div>
+</div>
+<section class="panel"><h2>Alertas de inventario</h2>
+  @for (r of vm.bajoStock().concat(vm.agotados()); track r.idReactivo) {
+    <p class="alert-item">⚠ {{ r.nombreComercial }} — {{ r.cantidadReactivo }} {{ r.unidadMedida }}</p>
+  } @empty { <p class="subtle">Sin alertas por el momento.</p> }
+</section>
