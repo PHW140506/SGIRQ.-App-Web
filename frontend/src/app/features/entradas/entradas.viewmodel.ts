@@ -10,7 +10,7 @@ export class EntradasViewModel {
     catch(e) { this.error.set(errorText(e)); } }
   async registrar(idReactivo: number, cantidad: number) {
     if (!confirm('¿Confirmas aumentar la existencia del reactivo?')) return false;
-    try { const result = await this.api.entrada(idReactivo, cantidad);
+    try { const result = await this.api.entrada(idReactivo, cantidad, new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 19));
       this.mensaje.set(`Entrada registrada. Existencia actual: ${result.cantidadActual}`);
       this.error.set(''); await this.cargar(); return true;
     } catch(e) { this.error.set(errorText(e)); return false; }

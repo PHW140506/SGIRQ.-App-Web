@@ -22,6 +22,29 @@ namespace Sgirq.Infrastructure.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("Sgirq.Domain.Entities.Entrada", b =>
+                {
+                    b.Property<int>("IdEntrada")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("idEntrada");
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("IdEntrada"));
+                    b.Property<decimal>("Cantidad")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("cantidad");
+                    b.Property<DateTime>("FechaEntrada")
+                        .HasColumnType("datetime")
+                        .HasColumnName("fechaEntrada");
+                    b.Property<int>("IdReactivo")
+                        .HasColumnType("int")
+                        .HasColumnName("idReactivo");
+                    b.HasKey("IdEntrada");
+                    b.HasIndex("FechaEntrada");
+                    b.HasIndex("IdReactivo");
+                    b.ToTable("Entrada", null, t => t.HasCheckConstraint("CK_Entrada_Cantidad", "cantidad > 0"));
+                });
+
             modelBuilder.Entity("Sgirq.Domain.Entities.Personal", b =>
                 {
                     b.Property<int>("IdPersonal")
@@ -51,7 +74,7 @@ namespace Sgirq.Infrastructure.Migrations
 
                     b.Property<string>("TipoPersonal")
                         .IsRequired()
-                        .HasColumnType("enum('Administrador','Auxiliar','Solicitante')")
+                        .HasColumnType("enum('Administrador','Auxiliar')")
                         .HasColumnName("tipoPersonal");
 
                     b.Property<string>("UsuarioPersonalLogin")
@@ -129,6 +152,10 @@ namespace Sgirq.Infrastructure.Migrations
                     b.HasIndex("IdPersonal");
 
                     b.HasIndex("NumeroCAS")
+                        .IsUnique();
+                    b.HasIndex("NombreComercial")
+                        .IsUnique();
+                    b.HasIndex("NombreQuimico")
                         .IsUnique();
 
                     b.ToTable("Reactivos", null, t =>
@@ -259,6 +286,15 @@ namespace Sgirq.Infrastructure.Migrations
                     b.HasOne("Sgirq.Domain.Entities.Personal", null)
                         .WithMany()
                         .HasForeignKey("IdPersonal")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sgirq.Domain.Entities.Entrada", b =>
+                {
+                    b.HasOne("Sgirq.Domain.Entities.Reactivo", null)
+                        .WithMany()
+                        .HasForeignKey("IdReactivo")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

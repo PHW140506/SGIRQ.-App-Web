@@ -1,5 +1,5 @@
 namespace Sgirq.Application.Common;
-public sealed class BusinessException(string message, int status = 400) : Exception(message)
+public sealed class BusinessException(string message, FailureKind kind = FailureKind.Validation) : Exception(message)
 {
-    public int Status { get; } = status;
+    public FailureKind Kind { get; } = kind;
 }

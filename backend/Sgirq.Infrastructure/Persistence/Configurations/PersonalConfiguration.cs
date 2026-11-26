@@ -12,7 +12,7 @@ public sealed class PersonalConfiguration : IEntityTypeConfiguration<Personal>
         b.Property(x => x.ApellidosPersonal).HasColumnName("apellidosPersonal").HasMaxLength(45).IsRequired();
         b.Property(x => x.UsuarioPersonalLogin).HasColumnName("usuarioPersonalLogin").HasMaxLength(25).IsRequired();
         b.Property(x => x.Contrasenia).HasColumnName("contrasenia").HasMaxLength(255).IsRequired();
-        b.Property(x => x.TipoPersonal).HasColumnName("tipoPersonal").HasColumnType("enum('Administrador','Auxiliar','Solicitante')");
+        b.Property(x => x.TipoPersonal).HasColumnName("tipoPersonal").HasColumnType("enum('Administrador','Auxiliar')");
         b.HasIndex(x => x.UsuarioPersonalLogin).IsUnique();
     }
 }

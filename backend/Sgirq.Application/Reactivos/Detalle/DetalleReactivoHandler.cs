@@ -1,12 +1,14 @@
+using Sgirq.Application.Common;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Sgirq.Application.Abstractions;
+using Sgirq.Domain.Repositories;
 namespace Sgirq.Application.Reactivos.Detalle;
-public sealed class DetalleReactivoHandler(ISgirqDb db) : IRequestHandler<DetalleReactivoQuery, ReactivoDto?>
+public sealed class DetalleReactivoHandler(IReactivoRepository reactivos, IMapper mapper) : IRequestHandler<DetalleReactivoQuery, ReactivoDto>
 {
-    public Task<ReactivoDto?> Handle(DetalleReactivoQuery x, CancellationToken ct) => db.Reactivos
-        .AsNoTracking().Where(r => r.IdReactivo == x.Id)
-        .Select(r => new ReactivoDto(r.IdReactivo, r.NombreComercial, r.NombreQuimico,
-            r.NumeroCAS, r.EstadoFisico, r.CantidadReactivo, r.UnidadMedida,
-            r.StockMinimo, r.ColorAnaquel, r.IdPersonal)).FirstOrDefaultAsync(ct);
+    public async Task<ReactivoDto> Handle(DetalleReactivoQuery request, CancellationToken ct)
+    {
+        var r = await reactivos.PorIdAsync(request.Id, ct)
+            ?? throw new BusinessException("Reactivo no encontrado", FailureKind.NotFound);
+        return mapper.ReactivoDto(r);
+    }
 }

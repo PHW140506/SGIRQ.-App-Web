@@ -85,7 +85,7 @@
 </label>
     <label>Color de anaquel<select [(ngModel)]="formulario.colorAnaquel" name="colorAnaquel">@for(a of anaqueles;track a){<option [value]="a">{{a}}</option>}</select>
 </label>
-    <label>ID del personal responsable<input required type="number" min="1" [(ngModel)]="formulario.idPersonal" name="idPersonal">
+    <label>ID del personal responsable<input required type="number" min="1" [(ngModel)]="formulario.idPersonal" name="idPersonal" readonly>
 </label>
   </div>
 <div class="actions right">

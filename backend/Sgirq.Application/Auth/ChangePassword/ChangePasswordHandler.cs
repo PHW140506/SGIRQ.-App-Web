@@ -1,19 +1,18 @@
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Sgirq.Application.Abstractions;
 using Sgirq.Application.Common;
+using Sgirq.Domain.Repositories;
 namespace Sgirq.Application.Auth.ChangePassword;
-public sealed class ChangePasswordHandler(ISgirqDb db, IPasswords passwords)
-    : IRequestHandler<ChangePasswordCommand, Unit>
+public sealed class ChangePasswordHandler(IPersonalRepository personal, IUnidadDeTrabajo unidad, IPasswords passwords) : IRequestHandler<ChangePasswordCommand, Unit>
 {
     public async Task<Unit> Handle(ChangePasswordCommand request, CancellationToken ct)
     {
-        var personal = await db.Personal.FirstOrDefaultAsync(x => x.IdPersonal == request.IdPersonal, ct)
-            ?? throw new BusinessException("Cuenta inexistente", 404);
-        if (!passwords.Verify(request.Actual, personal.Contrasenia))
+        var cuenta = await personal.PorIdAsync(request.IdPersonal, ct)
+            ?? throw new BusinessException("Cuenta inexistente", FailureKind.NotFound);
+        if (!passwords.Verify(request.Actual, cuenta.Contrasenia))
             throw new BusinessException("Contraseña actual incorrecta");
-        personal.Contrasenia = passwords.Hash(request.Nueva);
-        await db.SaveChangesAsync(ct);
+        cuenta.Contrasenia = passwords.Hash(request.Nueva);
+        await unidad.GuardarAsync(ct);
         return Unit.Value;
     }
 }

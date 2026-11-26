@@ -5,9 +5,11 @@ import { errorText } from '../../core/errors';
 @Injectable()
 export class SalidasViewModel {
   reactivos=signal<Reactivo[]>([]); salidas=signal<Salida[]>([]);
+  usuarios=signal<number[]>([]);
   error=signal(''); mensaje=signal(''); busy=signal(false);
   constructor(private api:ApiService){}
-  async cargar(){try{this.reactivos.set(await this.api.reactivos());}
+  async cargar(){try{this.reactivos.set(await this.api.reactivos());
+      this.usuarios.set(await this.api.solicitantes());}
     catch(e){this.error.set(errorText(e));}}
   async historial(desde='',hasta=''){
     try{this.salidas.set(await this.api.salidas(desde,hasta));this.error.set('');}

@@ -1,52 +1,53 @@
+using Sgirq.Application.Salidas.Dtos;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Sgirq.Application.Abstractions;
-using Sgirq.Application.Common;
 using Sgirq.Domain.Entities;
+using Sgirq.Application.Common;
+using Sgirq.Domain.Repositories;
 namespace Sgirq.Application.Salidas.Registrar;
-public sealed class RegistrarSalidaHandler(ISgirqDb db) : IRequestHandler<RegistrarSalidaCommand, int>
+public sealed class RegistrarSalidaHandler(ISalidaRepository salidas, IUsuarioRepository usuarios, IPersonalRepository personal,
+    IReactivoRepository reactivos, IUnidadDeTrabajo unidad) : IRequestHandler<RegistrarSalidaCommand, RegistrarSalidaResponse>
 {
-    public async Task<int> Handle(RegistrarSalidaCommand x, CancellationToken ct)
+    public async Task<RegistrarSalidaResponse> Handle(RegistrarSalidaCommand request, CancellationToken ct)
     {
-        await using var transaction = await db.BeginTransactionAsync(ct);
-        var anterior = await db.Salidas.Include(s => s.Requiere)
-            .FirstOrDefaultAsync(s => s.IdSalida == x.IdSalida, ct);
+        await using var tx = await unidad.IniciarTransaccionAsync(ct);
+        var salida = CrearSalida(request);
+        var anterior = await salidas.PorIdAsync(request.IdSalida, ct);
         if (anterior is not null)
         {
-            var mismaOperacion = anterior.IdUsuario == x.IdUsuario && anterior.IdPersonal == x.IdPersonal
-                && anterior.MotivoSalida == x.MotivoSalida.Trim()
-                && anterior.Requiere.Count == x.Reactivos.Count
-                && x.Reactivos.All(i => anterior.Requiere.Any(r => r.IdReactivo == i.IdReactivo
-                    && r.CantidadSolicitada == i.CantidadSolicitada));
-            if (!mismaOperacion)
-                throw new BusinessException("Identificador de salida reutilizado con información diferente", 409);
-            return x.IdSalida;
+            if (!anterior.MismoContenido(salida))
+                throw new BusinessException("Identificador de salida reutilizado", FailureKind.Conflict);
+            return new RegistrarSalidaResponse(request.IdSalida);
         }
-        if (!await db.Usuarios.AnyAsync(u => u.IdUsuario == x.IdUsuario, ct))
-            throw new BusinessException("Solicitante inexistente");
-        if (!await db.Personal.AnyAsync(p => p.IdPersonal == x.IdPersonal, ct))
-            throw new BusinessException("Personal responsable inexistente");
+        await ValidarYDescontarAsync(request, ct);
+        await salidas.AgregarAsync(salida, ct);
+        await unidad.GuardarAsync(ct);
+        await tx.ConfirmarAsync(ct);
+        return new RegistrarSalidaResponse(request.IdSalida);
+    }
 
-        // Bloqueo en orden fijo para evitar descuentos simultáneos y deadlocks.
+    private static Salida CrearSalida(RegistrarSalidaCommand x) => new()
+    {
+        IdSalida = x.IdSalida,
+        FechaSalida = DateTime.SpecifyKind(x.FechaSalida, DateTimeKind.Unspecified),
+        MotivoSalida = x.MotivoSalida.Trim(), IdUsuario = x.IdUsuario, IdPersonal = x.IdPersonal,
+        Requiere = x.Reactivos.Select(i => new Requiere
+        {
+            IdSalida = x.IdSalida, IdReactivo = i.IdReactivo,
+            CantidadSolicitada = i.CantidadSolicitada
+        }).ToList()
+    };
+
+    private async Task ValidarYDescontarAsync(RegistrarSalidaCommand x, CancellationToken ct)
+    {
+        if (!await usuarios.ExisteAsync(x.IdUsuario, ct))
+            throw new BusinessException("Usuario solicitante inexistente", FailureKind.NotFound);
+        if (!await personal.ExisteAsync(x.IdPersonal, ct))
+            throw new BusinessException("Personal responsable inexistente", FailureKind.NotFound);
         foreach (var item in x.Reactivos.OrderBy(i => i.IdReactivo))
         {
-            var reactivo = await db.BloquearReactivoAsync(item.IdReactivo, ct)
-                ?? throw new BusinessException($"Reactivo {item.IdReactivo} inexistente", 404);
-            if (reactivo.CantidadReactivo < item.CantidadSolicitada)
-                throw new BusinessException($"Sin existencias suficientes: {reactivo.NombreComercial}", 409);
-            reactivo.CantidadReactivo -= item.CantidadSolicitada;
+            var reactivo = await reactivos.BloquearAsync(item.IdReactivo, ct)
+                ?? throw new BusinessException("Reactivo inexistente", FailureKind.NotFound);
+            reactivo.Retirar(item.CantidadSolicitada);
         }
-        db.Salidas.Add(new Salida {
-            IdSalida = x.IdSalida, FechaSalida = x.FechaSalida,
-            MotivoSalida = x.MotivoSalida.Trim(), IdUsuario = x.IdUsuario,
-            IdPersonal = x.IdPersonal,
-            Requiere = x.Reactivos.Select(i => new Requiere {
-                IdSalida = x.IdSalida, IdReactivo = i.IdReactivo,
-                CantidadSolicitada = i.CantidadSolicitada
-            }).ToList()
-        });
-        await db.SaveChangesAsync(ct);
-        await transaction.CommitAsync(ct);
-        return x.IdSalida;
     }
 }
