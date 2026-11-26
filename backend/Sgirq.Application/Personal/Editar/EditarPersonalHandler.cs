@@ -1,18 +1,16 @@
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Sgirq.Application.Abstractions;
 using Sgirq.Application.Common;
+using Sgirq.Domain.Repositories;
 namespace Sgirq.Application.Personal.Editar;
-public sealed class EditarPersonalHandler(ISgirqDb db) : IRequestHandler<EditarPersonalCommand, Unit>
+public sealed class EditarPersonalHandler(IPersonalRepository personal, IUnidadDeTrabajo unidad, IMapper mapper) : IRequestHandler<EditarPersonalCommand, Unit>
 {
-    public async Task<Unit> Handle(EditarPersonalCommand x, CancellationToken ct)
+    public async Task<Unit> Handle(EditarPersonalCommand request, CancellationToken ct)
     {
-        var p = await db.Personal.FirstOrDefaultAsync(p => p.IdPersonal == x.IdPersonal, ct)
-            ?? throw new BusinessException("Personal inexistente", 404);
-        p.NombrePersonal = x.NombrePersonal.Trim();
-        p.ApellidosPersonal = x.ApellidosPersonal.Trim();
-        p.TipoPersonal = x.TipoPersonal;
-        await db.SaveChangesAsync(ct);
+        var cuenta = await personal.PorIdAsync(request.IdPersonal, ct)
+            ?? throw new BusinessException("Personal inexistente", FailureKind.NotFound);
+        mapper.ActualizarPersonal(request.Datos, cuenta);
+        await unidad.GuardarAsync(ct);
         return Unit.Value;
     }
 }

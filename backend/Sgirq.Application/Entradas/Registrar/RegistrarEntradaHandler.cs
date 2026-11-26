@@ -1,19 +1,25 @@
+using Sgirq.Application.Entradas.Dtos;
 using MediatR;
-using Sgirq.Application.Abstractions;
 using Sgirq.Application.Common;
+using Sgirq.Domain.Entities;
+using Sgirq.Domain.Repositories;
 namespace Sgirq.Application.Entradas.Registrar;
-public sealed class RegistrarEntradaHandler(ISgirqDb db) : IRequestHandler<RegistrarEntradaCommand, decimal>
+public sealed class RegistrarEntradaHandler(IReactivoRepository reactivos, IEntradaRepository entradas, IUnidadDeTrabajo unidad) : IRequestHandler<RegistrarEntradaCommand, RegistrarEntradaResponse>
 {
-    public async Task<decimal> Handle(RegistrarEntradaCommand x, CancellationToken ct)
+    public async Task<RegistrarEntradaResponse> Handle(RegistrarEntradaCommand request, CancellationToken ct)
     {
-        await using var transaction = await db.BeginTransactionAsync(ct);
-        var reactivo = await db.BloquearReactivoAsync(x.IdReactivo, ct)
-            ?? throw new BusinessException("Reactivo no registrado", 404);
-        if (reactivo.CantidadReactivo + x.Cantidad > 99999999.99m)
-            throw new BusinessException("Cantidad fuera del rango permitido");
-        reactivo.CantidadReactivo += x.Cantidad;
-        await db.SaveChangesAsync(ct);
-        await transaction.CommitAsync(ct);
-        return reactivo.CantidadReactivo;
+        await using var transaccion = await unidad.IniciarTransaccionAsync(ct);
+        var reactivo = await reactivos.BloquearAsync(request.IdReactivo, ct)
+            ?? throw new BusinessException("Reactivo no registrado", FailureKind.NotFound);
+        reactivo.Ingresar(request.Cantidad);
+        await entradas.AgregarAsync(new Entrada
+        {
+            IdReactivo = request.IdReactivo, Cantidad = request.Cantidad,
+            FechaEntrada = request.FechaEntrada ?? DateTime.Now
+        }, ct);
+        var cantidad = reactivo.CantidadReactivo;
+        await unidad.GuardarAsync(ct);
+        await transaccion.ConfirmarAsync(ct);
+        return new RegistrarEntradaResponse(cantidad);
     }
 }

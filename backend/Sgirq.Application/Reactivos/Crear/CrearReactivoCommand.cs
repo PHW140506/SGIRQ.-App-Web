@@ -1,3 +1,4 @@
+using Sgirq.Application.Reactivos.Dtos;
 using MediatR;
 namespace Sgirq.Application.Reactivos.Crear;
 public record CrearReactivoCommand(
@@ -8,4 +9,4 @@ public record CrearReactivoCommand(
     decimal CantidadReactivo, 
     string UnidadMedida,
     decimal StockMinimo, 
-    string ColorAnaquel, int IdPersonal) : IRequest<int>;
+    string ColorAnaquel, int IdPersonal) : IRequest<CrearReactivoResponse>, Sgirq.Application.Abstractions.IReactivoIdentidad;

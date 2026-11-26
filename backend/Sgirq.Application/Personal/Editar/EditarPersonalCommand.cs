@@ -1,4 +1,3 @@
 using MediatR;
 namespace Sgirq.Application.Personal.Editar;
-public record EditarPersonalCommand(int IdPersonal, string NombrePersonal,
-    string ApellidosPersonal, string TipoPersonal) : IRequest<Unit>;
+public sealed record EditarPersonalCommand(int IdPersonal, EditarPersonalDatos Datos) : IRequest<Unit>;

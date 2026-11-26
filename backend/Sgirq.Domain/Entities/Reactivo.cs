@@ -11,4 +11,17 @@ public sealed class Reactivo
     public decimal StockMinimo { get; set; }
     public string ColorAnaquel { get; set; } = "";
     public int IdPersonal { get; set; }
+    public void Ingresar(decimal cantidad)
+    {
+        if (cantidad <= 0 || CantidadReactivo + cantidad > 99999999.99m)
+            throw new Sgirq.Domain.Rules.InventarioException("Cantidad fuera del rango permitido");
+        CantidadReactivo += cantidad;
+    }
+
+    public void Retirar(decimal cantidad)
+    {
+        if (cantidad <= 0 || CantidadReactivo < cantidad)
+            throw new Sgirq.Domain.Rules.InventarioException($"Sin existencias suficientes: {NombreComercial}");
+        CantidadReactivo -= cantidad;
+    }
 }

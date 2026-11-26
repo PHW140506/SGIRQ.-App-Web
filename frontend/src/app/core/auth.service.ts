@@ -15,7 +15,7 @@ export class AuthService {
     const session = await this.api.login(usuario, password);
     sessionStorage.setItem(this.storageKey, JSON.stringify(session));
     this.session.set(session);
-    await this.router.navigateByUrl(session.rol === 'Solicitante' ? '/cuenta' : '/dashboard');
+    await this.router.navigateByUrl('/dashboard');
   }
   logout() {
     sessionStorage.removeItem(this.storageKey);

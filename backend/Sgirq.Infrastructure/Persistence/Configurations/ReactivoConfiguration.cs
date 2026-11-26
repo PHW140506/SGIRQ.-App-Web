@@ -21,6 +21,8 @@ public sealed class ReactivoConfiguration : IEntityTypeConfiguration<Reactivo>
             .HasColumnType("enum('Verde','Rojo','Azul','Amarillo','Blanco','Naranja')");
         b.Property(x => x.IdPersonal).HasColumnName("idPersonal");
         b.HasIndex(x => x.NumeroCAS).IsUnique();
+        b.HasIndex(x => x.NombreComercial).IsUnique();
+        b.HasIndex(x => x.NombreQuimico).IsUnique();
         b.HasOne<Personal>().WithMany().HasForeignKey(x => x.IdPersonal).OnDelete(DeleteBehavior.Restrict);
     }
 }

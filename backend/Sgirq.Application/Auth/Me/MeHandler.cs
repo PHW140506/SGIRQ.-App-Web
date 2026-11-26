@@ -1,11 +1,15 @@
+using Sgirq.Application.Common;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Sgirq.Application.Abstractions;
+using Sgirq.Domain.Repositories;
 namespace Sgirq.Application.Auth.Me;
-public sealed class MeHandler(ISgirqDb db) : IRequestHandler<MeQuery, MeResult?>
+public sealed class MeHandler(IPersonalRepository personal) : IRequestHandler<MeQuery, MeResult>
 {
-    public Task<MeResult?> Handle(MeQuery request, CancellationToken ct) => db.Personal.AsNoTracking()
-        .Where(p => p.IdPersonal == request.IdPersonal)
-        .Select(p => new MeResult(p.IdPersonal, p.NombrePersonal + " " + p.ApellidosPersonal,
-            p.UsuarioPersonalLogin, p.TipoPersonal)).FirstOrDefaultAsync(ct);
+    public async Task<MeResult> Handle(MeQuery request, CancellationToken ct)
+    {
+        var cuenta = await personal.PorIdAsync(request.IdPersonal, ct)
+            ?? throw new BusinessException("Cuenta inexistente", FailureKind.Unauthorized);
+        return new(cuenta.IdPersonal,
+            cuenta.NombrePersonal + " " + cuenta.ApellidosPersonal,
+            cuenta.UsuarioPersonalLogin, cuenta.TipoPersonal);
+    }
 }

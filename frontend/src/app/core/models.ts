@@ -7,7 +7,16 @@ export interface Reactivo { idReactivo: number; nombreComercial: string; nombreQ
 export interface ItemSalida { idReactivo: number; reactivo: string; cantidadSolicitada: number; }
 export interface Salida { idSalida: number; fechaSalida: string; motivoSalida: string;
   idUsuario: number; idPersonal: number; responsable: string; reactivos: ItemSalida[]; }
-export const roles = ['Administrador', 'Auxiliar', 'Solicitante'];
+export const roles = ['Administrador', 'Auxiliar'];
 export const estados = ['Líquido', 'Sólido'];
 export const unidades = ['Mililitro', 'Gramo', 'Litro', 'Kilogramo'];
 export const anaqueles = ['Verde','Rojo','Azul','Amarillo','Blanco','Naranja'];
+
+export interface AlertaReactivo { idReactivo: number; nombre: string; cantidad: number;
+  stockMinimo: number; unidad: string; estado: string; }
+export interface AlertasResultado { total: number; bajoStock: number;
+  agotados: number; alertas: AlertaReactivo[]; }
+export interface TrazabilidadItem { idSalida: number; fechaSalida: string; idUsuario: number;
+  responsable: string; motivo: string; cantidadSolicitada: number; }
+export interface Reporte { idReporte: number; fechaInicio: string; fechaFinal: string;
+  tipoReporte: string; idPersonal: number; }
